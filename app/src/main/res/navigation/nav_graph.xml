@@ -1,0 +1,68 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/categorySourceFragment">
+
+    <fragment
+        android:id="@+id/categorySourceFragment"
+        android:name="id.herdroid.newsapp.presentation.view.sourcebycategory.CategorySourceFragment"
+        android:label="Kategori dan Source"
+        tools:layout="@layout/fragment_category_source">
+
+        <action
+            android:id="@+id/action_categorySourceFragment_to_articleFragment"
+            app:destination="@id/articleFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="sourceId"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/articleFragment"
+        android:name="id.herdroid.newsapp.presentation.view.article.ArticleFragment"
+        android:label="Article"
+        tools:layout="@layout/fragment_article">
+
+        <argument
+            android:name="sourceId"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_articleFragment_to_detailActivity"
+            app:destination="@id/detailActivity">
+            <argument
+                android:name="article"
+                app:argType="id.herdroid.newsapp.data.model.Article" />
+        </action>
+    </fragment>
+
+    <activity
+        android:id="@+id/detailActivity"
+        android:name="id.herdroid.newsapp.presentation.view.detail.DetailActivity"
+        android:label="Detail Activity">
+        <argument
+            android:name="article"
+            app:argType="id.herdroid.newsapp.data.model.Article" />
+    </activity>
+
+    <fragment
+        android:id="@+id/favoriteFragment"
+        android:name="id.herdroid.newsapp.presentation.view.favorite.FavoriteFragment"
+        android:label="Favorite"
+        tools:layout="@layout/fragment_favorite">
+
+        <action
+            android:id="@+id/action_favoriteFragment_to_detailFragment"
+            app:destination="@id/detailActivity">
+            <argument
+                android:name="article"
+                app:argType="id.herdroid.newsapp.data.model.Article" />
+        </action>
+    </fragment>
+</navigation>
