@@ -33,7 +33,7 @@ class CategorySourceFragment : Fragment() {
     private lateinit var adapter: SourceAdapter
 
     private val categories = CategoryDataDummy.getCategories()
-    private var isOnline: Boolean = true // simpan status koneksi di sini
+    private var isOnline: Boolean = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCategorySourceBinding.inflate(inflater, container, false)
@@ -45,7 +45,7 @@ class CategorySourceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        isOnline = requireContext().isNetworkAvailable() // cek koneksi sekali saja
+        isOnline = requireContext().isNetworkAvailable()
 
         binding.searchView.isFocusable = false
         binding.searchView.setIconifiedByDefault(false)
@@ -82,7 +82,7 @@ class CategorySourceFragment : Fragment() {
 
         binding.tabLayout.getTabAt(0)?.select()
         val firstCategory = categories.first().name
-        viewModel.loadSources(firstCategory, isOnline) // pakai parameter isOnline
+        viewModel.loadSources(firstCategory, isOnline)
     }
 
     private fun handleEmptyState(list: List<Source>) {

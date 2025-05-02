@@ -83,13 +83,6 @@ class ArticleFragment : Fragment() {
             fetchArticles(args.sourceId)
         }
 
-//        showShimmer(true)
-//        viewModel.offlineArticles.observe(viewLifecycleOwner) {
-//            if (it.isNotEmpty()) {
-//                adapter.submitData(lifecycle, PagingData.from(it))
-//                showShimmer(false)
-//            }
-//        }
 
     }
 

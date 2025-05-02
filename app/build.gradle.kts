@@ -16,7 +16,6 @@ if (localPropertiesFile.exists()) {
 }
 val newsApiKey: String = localProperties.getProperty("NEWS_API_KEY") ?: ""
 
-
 android {
     namespace = "id.herdroid.newsapp"
     compileSdk = 35
@@ -74,7 +73,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.mockk)
     implementation(libs.androidx.fragment.ktx)
-
 
     // Lifecycle
     implementation(libs.lifecycle.viewmodel)
