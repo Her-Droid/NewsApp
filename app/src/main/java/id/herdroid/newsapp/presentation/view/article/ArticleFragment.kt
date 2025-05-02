@@ -48,6 +48,10 @@ class ArticleFragment : Fragment() {
 
         binding.recyclerViewArticles.adapter = adapter
 
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+
         adapter.addLoadStateListener { loadStates ->
             val isListEmpty = loadStates.refresh is androidx.paging.LoadState.NotLoading &&
                     adapter.itemCount == 0
@@ -56,32 +60,36 @@ class ArticleFragment : Fragment() {
             binding.recyclerViewArticles.visibility = if (isListEmpty) View.GONE else View.VISIBLE
         }
 
-        showShimmer(true)
-        viewModel.offlineArticles.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                adapter.submitData(lifecycle, PagingData.from(it))
-                showShimmer(false)
-            }
-        }
-
         binding.recyclerViewArticles.startAnimation(
             AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
         )
 
-        fetchArticles(args.sourceId)
+        val isOffline = !requireContext().isNetworkAvailable()
 
-        if (!requireContext().isNetworkAvailable()) {
-            Toast.makeText(requireContext(), "Kamu sedang offline. Menampilkan artikel cache", Toast.LENGTH_LONG).show()
-
+        if (isOffline) {
             binding.tvNetworkStatus.apply {
                 visibility = View.VISIBLE
                 text = "Kamu sedang offline"
             }
+
+            adapter.submitData(lifecycle, PagingData.empty())
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                val cached = viewModel.getCachedArticlesBySource(args.sourceId)
+                adapter.submitData(lifecycle, PagingData.from(cached))
+                showShimmer(false)
+            }
+        } else {
+            fetchArticles(args.sourceId)
         }
 
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
+//        showShimmer(true)
+//        viewModel.offlineArticles.observe(viewLifecycleOwner) {
+//            if (it.isNotEmpty()) {
+//                adapter.submitData(lifecycle, PagingData.from(it))
+//                showShimmer(false)
+//            }
+//        }
 
     }
 
@@ -107,7 +115,7 @@ class ArticleFragment : Fragment() {
 
     private fun fetchArticles(sourceId: String) {
         currentJob?.cancel()
-        currentJob = lifecycleScope.launch {
+        currentJob = viewLifecycleOwner.lifecycleScope.launch {
             try {
                 showShimmer(true)
                 viewModel.getArticlesPager(sourceId).flow
@@ -116,10 +124,10 @@ class ArticleFragment : Fragment() {
                         showShimmer(false)
                         adapter.submitData(it)
                     }
-
-
             } catch (e: Exception) {
-                viewModel.loadOfflineArticles()
+                val cached = viewModel.getCachedArticlesBySource(sourceId)
+                adapter.submitData(lifecycle, PagingData.from(cached))
+                showShimmer(false)
             }
         }
     }

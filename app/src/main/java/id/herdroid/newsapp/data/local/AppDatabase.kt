@@ -11,7 +11,7 @@ import id.herdroid.newsapp.data.local.entity.OfflineSourceEntity
 
 @Database(
     entities = [FavoriteArticleEntity::class, OfflineArticleEntity::class, OfflineSourceEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

@@ -10,6 +10,7 @@ interface NewsRepository {
     suspend fun searchArticles(query: String, page: Int): List<Article>
     suspend fun getLatestArticlesFromRemote(): List<Article>
     suspend fun cacheArticles(articles: List<Article>)
-    suspend fun getCachedArticles(): List<Article>
+    suspend fun getCachedArticlesBySource(sourceId: String): List<Article>
+
 }
 

@@ -11,5 +11,6 @@ data class OfflineArticleEntity(
     val urlToImage: String?,
     val publishedAt: String?,
     val sourceName: String?,
-    val author: String?
+    val author: String?,
+    val sourceId: String?
 )

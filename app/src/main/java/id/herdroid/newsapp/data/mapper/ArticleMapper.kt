@@ -31,7 +31,7 @@ fun SourceDto.toDomain(): Source {
 }
 
 
-fun Article.toEntity(): OfflineArticleEntity {
+fun Article.toEntity(sourceId: String): OfflineArticleEntity {
     return OfflineArticleEntity(
         url = this.url,
         title = this.title,
@@ -39,9 +39,11 @@ fun Article.toEntity(): OfflineArticleEntity {
         urlToImage = this.urlToImage,
         publishedAt = this.publishedAt,
         sourceName = this.source?.name,
-        author = this.author
+        author = this.author,
+        sourceId = sourceId
     )
 }
+
 
 fun OfflineArticleEntity.toDomain(): Article {
     return Article(

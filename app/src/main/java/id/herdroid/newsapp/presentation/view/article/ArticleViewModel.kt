@@ -45,13 +45,8 @@ class ArticleViewModel @Inject constructor(
         }
     }
 
-    private val _offlineArticles = MutableLiveData<List<Article>>()
-    val offlineArticles: LiveData<List<Article>> get() = _offlineArticles
-
-    fun loadOfflineArticles() {
-        viewModelScope.launch {
-            val cached = newsRepository.getCachedArticles()
-            _offlineArticles.value = cached
-        }
+    suspend fun getCachedArticlesBySource(sourceId: String): List<Article> {
+        return newsRepository.getCachedArticlesBySource(sourceId)
     }
+
 }

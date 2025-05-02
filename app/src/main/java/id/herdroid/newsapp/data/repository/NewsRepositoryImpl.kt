@@ -19,8 +19,16 @@ class NewsRepositoryImpl @Inject constructor(
 
     override suspend fun getArticlesBySource(sourceId: String, page: Int): List<Article> {
         val response = apiService.getTopHeadlinesBySource(sourceId = sourceId, page = page)
-        return response.body()?.articles?.map { it.toDomain() } ?: emptyList()
+        val articles = response.body()?.articles?.map { it.toDomain() } ?: emptyList()
+        if (page == 1) {
+            val entities = articles.map { it.toEntity(sourceId) }
+            offlineArticleDao.clearCachedArticlesBySource(sourceId)
+            offlineArticleDao.insertArticles(entities)
+        }
+
+        return articles
     }
+
 
     override suspend fun searchArticles(query: String, page: Int): List<Article> {
         val response = apiService.searchArticles(query = query, page = page)
@@ -60,12 +68,19 @@ class NewsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun cacheArticles(articles: List<Article>) {
-        val entities = articles.map { it.toEntity() }
-        offlineArticleDao.clearCachedArticles()
-        offlineArticleDao.insertArticles(entities)
+        val groupedBySourceId = articles.groupBy { it.source?.id.orEmpty() }
+
+        groupedBySourceId.forEach { (sourceId, articlesForSource) ->
+            val entities = articlesForSource.map { it.toEntity(sourceId) }
+            offlineArticleDao.clearCachedArticlesBySource(sourceId)
+            offlineArticleDao.insertArticles(entities)
+        }
     }
 
-    override suspend fun getCachedArticles(): List<Article> {
-        return offlineArticleDao.getCachedArticles().map { it.toDomain() }
+
+
+    override suspend fun getCachedArticlesBySource(sourceId: String): List<Article> {
+        return offlineArticleDao.getCachedArticlesBySource(sourceId).map { it.toDomain() }
     }
+
 }
